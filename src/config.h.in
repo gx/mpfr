@@ -1,0 +1,53 @@
+#ifndef __MPFR_CONFIG_H__
+#define __MPFR_CONFIG_H__
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#cmakedefine HAVE_INTTYPES_H 1
+
+/* Define to 1 if you have the <locale.h> header file. */
+#cmakedefine HAVE_LOCALE_H 1
+
+/* Define to 1 if you have the <stdarg.h> header file. */
+#cmakedefine HAVE_STDARG 1
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDINT_H 1
+
+/* Define to 1 if the system has the type `long long'. */
+#cmakedefine HAVE_LONG_LONG 1
+
+/* Define to 1 if the system is big endian. */
+#cmakedefine HAVE_BIG_ENDIAN 1
+
+/* Define to 1 if the system is little endian. */
+#cmakedefine HAVE_LITTLE_ENDIAN 1
+
+/* Define to 1 if the double format is big endian. */
+#cmakedefine HAVE_DOUBLE_IEEE_BIG_ENDIAN 1
+
+/* Define to 1 if the double format is little endian. */
+#cmakedefine HAVE_DOUBLE_IEEE_LITTLE_ENDIAN 1
+
+/* Define to 1 if you have the `clock_gettime' function. */
+#cmakedefine HAVE_CLOCK_GETTIME 1
+
+/* Define to 1 if you have the `sigaction' function. */
+#cmakedefine HAVE_SIGACTION 1
+
+/* Define to 1 if you have the `signal' function. */
+#cmakedefine HAVE_SIGNAL 1
+
+/* Define to 1 if you have the `va_copy' macro. */
+#cmakedefine HAVE_VA_COPY 1
+
+/* Define to 1 if you have `__va_copy' function. */
+#cmakedefine HAVE___VA_COPY 1
+
+#cmakedefine MPFR_USE_THREAD_SAFE 1
+
+#cmakedefine MPFR_USE_C11_THREAD_SAFE 1
+
+/* Define to 1 if you have a working INTMAX_MAX. */
+#cmakedefine MPFR_HAVE_INTMAX_MAX 1
+
+#endif // __MPFR_CONFIG_H__

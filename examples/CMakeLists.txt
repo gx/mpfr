@@ -1,0 +1,5 @@
+set(examples can_round divworst rndo-add sample version)
+foreach(e ${examples})
+  add_executable(${e} ${e}.c)
+  target_link_libraries(${e} libmpfr)
+endforeach()

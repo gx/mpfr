@@ -1,0 +1,57 @@
+version: '4.0.2-1-{build}'
+
+branches:
+  only:
+    - develop
+
+skip_non_tags: true
+
+image: Visual Studio 2017
+
+configuration:
+  - Release
+  - Debug
+
+environment:
+  matrix:
+    - CMAKE_GENERATOR_NAME: Visual Studio 15 2017
+      TOOLSET: msvc2017-x86
+    - CMAKE_GENERATOR_NAME: Visual Studio 15 2017 Win64
+      TOOLSET: msvc2017-x64
+
+matrix:
+  fast_finish: true
+
+install:
+  - cmd: curl -fsSL -o gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%.zip https://github.com/gx/gmp/releases/download/6.1.2-1/gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%.zip
+  - cmd: 7z x gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%.zip
+  - cmd: set PATH=%APPVEYOR_BUILD_FOLDER%/gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%/bin;%PATH%
+
+before_build:
+  - cmd: mkdir build
+  - cmd: cd build
+  - cmd: cmake -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX:PATH=../mpfr-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION% -DCMAKE_PREFIX_PATH:PATH=%APPVEYOR_BUILD_FOLDER%/gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION% ..
+
+build_script:
+  - cmd: cmake --build . --config %CONFIGURATION%
+
+test_script:
+  - cmd: if "%CONFIGURATION%"=="Release" ( cmake --build . --config %CONFIGURATION% --target RUN_TESTS )
+
+after_test:
+  - cmd: cmake --build . --config %CONFIGURATION% --target INSTALL
+  - cmd: cd ..
+  - cmd: 7z a mpfr-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION%.zip mpfr-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION%
+
+artifacts:
+  - path: mpfr-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION%.zip
+    name: mpfr
+
+deploy:
+  - provider: GitHub
+    artifacts: /.*\.zip/
+    auth_token:
+      secure: V7tmaT1H61+mKEJT1uMzSVwT2HseGbOBhMHIBVWQ72YEprXQ0wyXWw3Cp9O4pvyR
+    on:
+      branch: develop          # release from develop branch only
+      APPVEYOR_REPO_TAG: true  # deploy on tag push only
