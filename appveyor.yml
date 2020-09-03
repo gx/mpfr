@@ -6,31 +6,34 @@ branches:
 
 skip_non_tags: true
 
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 configuration:
   - Release
   - Debug
 
 environment:
+  GMP_VERSION: 6.1.2-2
   matrix:
-    - CMAKE_GENERATOR_NAME: Visual Studio 15 2017
-      TOOLSET: msvc2017-x86
-    - CMAKE_GENERATOR_NAME: Visual Studio 15 2017 Win64
-      TOOLSET: msvc2017-x64
+    - TOOLSET: msvc2019-x86
+      GENERATOR: Visual Studio 16 2019
+      PLATFORM: Win32
+    - TOOLSET: msvc2019-x64
+      GENERATOR: Visual Studio 16 2019
+      PLATFORM: x64
 
 matrix:
   fast_finish: true
 
 install:
-  - cmd: curl -fsSL -o gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%.zip https://github.com/gx/gmp/releases/download/6.1.2-1/gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%.zip
-  - cmd: 7z x gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%.zip
-  - cmd: set PATH=%APPVEYOR_BUILD_FOLDER%/gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION%/bin;%PATH%
+  - cmd: curl -fsSL -o gmp-%GMP_VERSION%-%TOOLSET%-%CONFIGURATION%.zip https://github.com/gx/gmp/releases/download/%GMP_VERSION%/gmp-%GMP_VERSION%-%TOOLSET%-%CONFIGURATION%.zip
+  - cmd: 7z x gmp-%GMP_VERSION%-%TOOLSET%-%CONFIGURATION%.zip
+  - cmd: set PATH=%APPVEYOR_BUILD_FOLDER%/gmp-%GMP_VERSION%-%TOOLSET%-%CONFIGURATION%/bin;%PATH%
 
 before_build:
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX:PATH=../mpfr-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION% -DCMAKE_PREFIX_PATH:PATH=%APPVEYOR_BUILD_FOLDER%/gmp-6.1.2-1-%TOOLSET%-%CONFIGURATION% ..
+  - cmd: cmake -G "%GENERATOR%" -A %PLATFORM% -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%/mpfr-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION% -DCMAKE_PREFIX_PATH:PATH=%APPVEYOR_BUILD_FOLDER%/gmp-%GMP_VERSION%-%TOOLSET%-%CONFIGURATION% ..
 
 build_script:
   - cmd: cmake --build . --config %CONFIGURATION%
